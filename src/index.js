@@ -1,28 +1,26 @@
-
 import Phaser from "phaser";
-
 const config = {
   type: Phaser.AUTO,
   width: 800,
   height: 600,
   physics: {
-    default: 'arcade',
-    arcade: {
-      gravity: { y: 200 }
-    }
+    default: "arcade"
   },
   scene: {
-    preload: preload,
-    create: create
+    preload,
+    create
   }
 };
 
-new Phaser.Game(config);
-
-function preload () {
+function preload() {
   this.load.image('sky', 'assets/sky.png');
+  this.load.image('bird', 'assets/bird.png');
 }
-
-function create () {
-  this.add.image(400, 300, 'sky');
+let bird = null;
+function create() {
+  //this.add.image(config.width / 2, config.height / 2, 'sky');
+  this.add.image(0, 0, 'sky').setOrigin(0, 0);
+  bird = this.add.sprite(config.width / 10, config.height / 2, 'bird').setOrigin(0);
+  debugger;
 }
+new Phaser.Game(config);
