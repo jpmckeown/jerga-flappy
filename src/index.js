@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 const config = {
   type: Phaser.AUTO,
-  width: 800,
+  width: 3600,
   height: 600,
   physics: {
     default: "arcade",
@@ -19,15 +19,27 @@ const config = {
 
 // background has 40-pixel wide banding
 let bird = null;
+const PIPE_NUM = 4;
 let pipes = [];
-const xSpeed = 100;
-const initBirdPos = { x: config.width / 10, y: config.height / 4 };
-const pipeX = 300;
-const gapTop = 200;
+const gravity = 30;
+const flapSpeed = 50;
+const xSpeed = 0;
+const initBirdX = 50;
+const initBirdY = 50; //config.height / 10;
+
+// these will both vary with difficulty
 const yGapMin = 150;
 const yGapMax = 250;
 let yGap = Phaser.Math.Between(yGapMin, yGapMax);
-const pipeHeight = 480;
+
+const pipeGraphicHeight = 480;
+const pipeHeightMinimum = 10;
+const gapTopMin = pipeHeightMinimum;
+const gapTopMax = config.height - yGap - pipeHeightMinimum;
+// to avoid visual error of gap at screentop, gapTopMax cannot exceed pipeGraphicHeight
+
+//let pipeX = Phaser.Math.Between(100, 700);
+let pipeSpacingX = 800;
 
 function preload() {
   this.load.image('sky', 'assets/sky.png');
@@ -39,12 +51,20 @@ function create() {
   //this.add.image(config.width / 2, config.height / 2, 'sky');
   this.add.image(0, 0, 'sky').setOrigin(0, 0);
 
-  pipes[0] = this.physics.add.sprite(pipeX, gapTop, 'pipe').setOrigin(0, 1);
-  pipes[1] = this.physics.add.sprite(pipeX, gapTop + yGap, 'pipe').setOrigin(0, 0);
-  console.log(pipes);
-  bird = this.physics.add.sprite(initBirdPos.x, initBirdPos.y, 'bird');
-  bird.body.gravity.y = 40;
-  bird.body.velocity.x = xSpeed;
+  let pipeX = 500;
+  for (let i = 0; i < PIPE_NUM; i++) {
+    let gapTop = Phaser.Math.Between(gapTopMin, gapTopMax);
+    pipes[0] = this.physics.add.sprite(pipeX, gapTop, 'pipe').setOrigin(0, 1);
+    pipes[1] = this.physics.add.sprite(pipeX, gapTop + yGap, 'pipe').setOrigin(0, 0);
+    pipes[0].body.velocity.x = -100;
+    pipes[1].body.velocity.x = -100;
+    console.log(pipes);
+    pipeX += pipeSpacingX;
+  }
+
+  bird = this.physics.add.sprite(initBirdX, initBirdY, 'bird');  //(initBirdPos.x, initBirdPos.y, 'bird');
+  bird.body.gravity.y = gravity;
+  bird.body.velocity.x = 0;
   console.log(bird);
   this.input.on('pointerdown', flap);
   let spacebar = this.input.keyboard.addKey('SPACE');
@@ -60,7 +80,7 @@ function update(time, delta) {
     bird.body.velocity.x *= -1;
   }
   // allow bird to go above top of screen
-  if (bird.body.position.y > config.height) {
+  if (bird.body.position.y > config.height - bird.height) {
     console.log("You crashed into the ground.");
     restartBirdPosition();
   }
@@ -70,14 +90,21 @@ function update(time, delta) {
   }
 }
 
+function redoPipes() {
+  yGap = Phaser.Math.Between(yGapMin, yGapMax);
+  gapTop = Phaser.Math.Between(gapTopMin, gapTopMax);
+  pipeX = Phaser.Math.Between(100, 700);
+}
+
 function restartBirdPosition() {
-  bird.x = initBirdPos.x;
-  bird.y = initBirdPos.y;
-  bird.body.velocity.x = xSpeed;
+  bird.body.x = initBirdX;  //Pos.x;
+  bird.body.y = initBirdY;  //Pos.y;
+  bird.body.velocity.x = 0;
   bird.body.velocity.y = 0;
 }
+
 function flap() {
-  bird.body.velocity.y = -xSpeed / 2;
+  bird.body.velocity.y -= flapSpeed;
   console.log("flapping");
 }
 new Phaser.Game(config);
