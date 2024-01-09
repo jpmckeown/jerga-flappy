@@ -19,8 +19,9 @@ const config = {
 
 // background has 40-pixel wide banding
 let bird = null;
+let pipes = null;
 const PIPE_NUM = 4;
-let pipes = [];
+
 const gravity = 30;
 const flapSpeed = 50;
 const xSpeed = 0;
@@ -38,7 +39,7 @@ const gapTopMin = pipeHeightMinimum;
 const gapTopMax = config.height - yGap - pipeHeightMinimum;
 // to avoid visual error of gap at screentop, gapTopMax cannot exceed pipeGraphicHeight
 
-//let pipeX = Phaser.Math.Between(100, 700);
+let pipeX = 500;  //Phaser.Math.Between(100, 700);
 let pipeSpacingX = 800;
 
 function preload() {
@@ -51,15 +52,18 @@ function create() {
   //this.add.image(config.width / 2, config.height / 2, 'sky');
   this.add.image(0, 0, 'sky').setOrigin(0, 0);
 
-  let pipeX = 500;
   for (let i = 0; i < PIPE_NUM; i++) {
-    let gapTop = Phaser.Math.Between(gapTopMin, gapTopMax);
-    pipes[0] = this.physics.add.sprite(pipeX, gapTop, 'pipe').setOrigin(0, 1);
-    pipes[1] = this.physics.add.sprite(pipeX, gapTop + yGap, 'pipe').setOrigin(0, 0);
-    pipes[0].body.velocity.x = -100;
-    pipes[1].body.velocity.x = -100;
-    console.log(pipes);
-    pipeX += pipeSpacingX;
+    let upperPipe = this.physics.add.sprite(0, 0, 'pipe').setOrigin(0, 1);
+    let lowerPipe = this.physics.add.sprite(0, 0, 'pipe').setOrigin(0, 0);
+    placePipe(upperPipe, lowerPipe, pipeX);
+
+    // let gapTop = Phaser.Math.Between(gapTopMin, gapTopMax);
+    // pipes[0] = this.physics.add.sprite(pipeX, gapTop, 'pipe').setOrigin(0, 1);
+    // pipes[1] = this.physics.add.sprite(pipeX, gapTop + yGap, 'pipe').setOrigin(0, 0);
+    // pipes[0].body.velocity.x = -100;
+    // pipes[1].body.velocity.x = -100;
+    // console.log(pipes);
+    // pipeX += pipeSpacingX;
   }
 
   bird = this.physics.add.sprite(initBirdX, initBirdY, 'bird');  //(initBirdPos.x, initBirdPos.y, 'bird');
@@ -96,9 +100,20 @@ function redoPipes() {
   pipeX = Phaser.Math.Between(100, 700);
 }
 
+function placePipe(uPipe, lPipe) {
+  let gapTop = Phaser.Math.Between(gapTopMin, gapTopMax);
+  uPipe.x = pipeX;
+  uPipe.y = gapTop;
+  lPipe.x = pipeX;
+  lPipe.y = gapTop + yGap;
+  uPipe.body.velocity.x = -100;
+  lPipe.body.velocity.x = -100;
+  pipeX += pipeSpacingX;
+}
+
 function restartBirdPosition() {
-  bird.body.x = initBirdX;  //Pos.x;
-  bird.body.y = initBirdY;  //Pos.y;
+  bird.body.x = initBirdX;
+  bird.body.y = initBirdY;
   bird.body.velocity.x = 0;
   bird.body.velocity.y = 0;
 }
