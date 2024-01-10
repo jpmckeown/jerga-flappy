@@ -1,4 +1,6 @@
 import Phaser from "phaser";
+import Play from "./scenes/play";
+
 const config = {
   type: Phaser.AUTO,
   width: 1200,
@@ -10,13 +12,13 @@ const config = {
       // gravity: { y: 10 }
     }
   },
-  scene: {
-    preload,
-    create,
-    update
-  }
+  scene: [Play]
 };
-
+// scene: {
+//   preload,
+//   create,
+//   update
+// }
 // background has 40-pixel wide banding
 let bird = null;
 let pipes = null;
