@@ -1,7 +1,7 @@
 import Phaser from "phaser";
 const config = {
   type: Phaser.AUTO,
-  width: 3600,
+  width: 1200,
   height: 600,
   physics: {
     default: "arcade",
@@ -20,9 +20,9 @@ const config = {
 // background has 40-pixel wide banding
 let bird = null;
 let pipes = null;
-const PIPE_NUM = 4;
+const PIPE_NUM = 3;
 
-const gravity = 30;
+const gravity = 50;
 const flapSpeed = 50;
 const xSpeed = 0;
 const initBirdX = 50;
@@ -34,12 +34,9 @@ const pipeHeightMinimum = 10;
 
 // these can vary with difficulty
 let xFirstPipeRange = [400, 600];
-let pipeX = Phaser.Math.Between(...xFirstPipeRange);
+//let pipeX = Phaser.Math.Between(...xFirstPipeRange);
 let xSpacingRange = [400, 600];
 let yGapRange = [150, 250];
-
-// let xSpacing = null;
-// let gapTop = null;
 
 function preload() {
   this.load.image('sky', 'assets/sky.png');
@@ -65,24 +62,13 @@ function create() {
   this.input.on('pointerdown', flap);
   let spacebar = this.input.keyboard.addKey('SPACE');
   spacebar.on('down', flap);
+  // alternative format fails
+  // this.input.on('keydown-SPACE', flap);
 }
 
 function update(time, delta) {
-  if (bird.body.position.x > config.width - bird.body.width) {
-    bird.body.velocity.x *= -1;
-  }
-  else if (bird.body.position.x < 0) {
-    bird.body.velocity.x *= -1;
-  }
-  // allow bird to go above top of screen
-  if (bird.body.position.y > config.height - bird.height) {
-    console.log("You crashed into the ground.");
-    restartBirdPosition();
-  }
-  else if (bird.body.position.y < -240) {
-    console.log("You flew too high near the sun.");
-    restartBirdPosition();
-  }
+  checkBirdCrash();
+  recyclePipes();
 }
 
 function placePipe(uPipe, lPipe) {
@@ -91,13 +77,13 @@ function placePipe(uPipe, lPipe) {
   let gapTopRange = [pipeHeightMinimum, gapTopMax];
   let gapTop = Phaser.Math.Between(...gapTopRange);
   let xSpacing = Phaser.Math.Between(...xSpacingRange);
-  let rightX = getRightMostPipe();
-  console.log(xSpacing, gapTop, pipeX, rightX);
+  let xPrevious = getRightMostPipe();
+  let pipeX = xPrevious + xSpacing;
+  console.log(pipeX, xSpacing); //, gapTop, rightX);
   uPipe.x = pipeX;
   uPipe.y = gapTop;
   lPipe.x = pipeX;
   lPipe.y = gapTop + yGap;
-  pipeX += xSpacing;
 }
 
 function recyclePipes() {
@@ -127,6 +113,23 @@ function getRightMostPipe() {
   return rightmostX;
 }
 
+function checkBirdCrash() {
+  if (bird.body.position.x > config.width - bird.body.width) {
+    bird.body.velocity.x *= -1;
+  }
+  else if (bird.body.position.x < 0) {
+    bird.body.velocity.x *= -1;
+  }
+  // allow bird to go above top of screen
+  if (bird.body.position.y > config.height - bird.height) {
+    console.log("You crashed into the ground.");
+    restartBirdPosition();
+  }
+  else if (bird.body.position.y < -240) {
+    console.log("You flew too high near the sun.");
+    restartBirdPosition();
+  }
+}
 function flap() {
   bird.body.velocity.y -= flapSpeed;
   console.log("flapping");
