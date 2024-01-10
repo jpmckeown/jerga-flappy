@@ -20,8 +20,19 @@ class Play extends Phaser.Scene {
   }
 
   create() {
-    this.add.image(0, 0, 'sky').setOrigin(0, 0);
+    this.add.image(0, 0, 'sky').setOrigin(0, 0); // background
+    this.makePipes();
+    this.makeBird();
+    this.makeColliders();
+    this.handleInputs();
+  }
 
+  update() {
+    this.checkBirdCrash();
+    this.recyclePipes();
+  }
+
+  makePipes() {
     this.pipes = this.physics.add.group();
     for (let i = 0; i < PIPES_TO_RENDER; i++) {
       let upperPipe = this.pipes.create(0, 0, 'pipe').setOrigin(0, 1);
@@ -29,18 +40,22 @@ class Play extends Phaser.Scene {
       this.placePipe(upperPipe, lowerPipe);
     }
     this.pipes.setVelocityX(-100);
+  }
 
+  makeBird() {
     this.bird = this.physics.add.sprite(this.config.playerInitX, this.config.playerInitY, 'bird');
     this.bird.body.gravity.y = 30;
     this.bird.body.velocity.x = 0;
+  }
+
+  makeColliders() {
+    this.physics.add.collider(this.bird, this.pipes);
+  }
+
+  handleInputs() {
     this.input.on('pointerdown', this.flap, this);
     let spacebar = this.input.keyboard.addKey('SPACE');
     spacebar.on('down', this.flap, this);
-  }
-
-  update() {
-    this.checkBirdCrash();
-    this.recyclePipes();
   }
 
   placePipe(uPipe, lPipe) {
