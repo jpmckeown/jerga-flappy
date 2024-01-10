@@ -1,14 +1,16 @@
 import Phaser from 'phaser';
-const PIPE_NUM = 3;
+const PIPES_TO_RENDER = 3;
 
 class Play extends Phaser.Scene {
   constructor(config) {
     super('Play');
     this.config = config;
     this.bird = null;
+    this.flapSpeed = 50;
     this.pipes = null;
     this.xSpacingRange = [400, 600];
     this.yGapRange = [150, 250];
+    this.pipeHeightMinimum = 10;
   }
 
   preload() {
@@ -21,7 +23,7 @@ class Play extends Phaser.Scene {
     this.add.image(0, 0, 'sky').setOrigin(0, 0);
 
     this.pipes = this.physics.add.group();
-    for (let i = 0; i < PIPE_NUM; i++) {
+    for (let i = 0; i < PIPES_TO_RENDER; i++) {
       let upperPipe = this.pipes.create(0, 0, 'pipe').setOrigin(0, 1);
       let lowerPipe = this.pipes.create(0, 0, 'pipe').setOrigin(0, 0);
       this.placePipe(upperPipe, lowerPipe);
@@ -29,11 +31,16 @@ class Play extends Phaser.Scene {
     this.pipes.setVelocityX(-100);
 
     this.bird = this.physics.add.sprite(this.config.playerInitX, this.config.playerInitY, 'bird');
-    bird.body.gravity.y = gravity;
-    bird.body.velocity.x = 0;
-    // this.input.on('pointerdown', flap);
-    // let spacebar = this.input.keyboard.addKey('SPACE');
-    // spacebar.on('down', flap);
+    this.bird.body.gravity.y = 30;
+    this.bird.body.velocity.x = 0;
+    this.input.on('pointerdown', this.flap, this);
+    let spacebar = this.input.keyboard.addKey('SPACE');
+    spacebar.on('down', this.flap, this);
+  }
+
+  update() {
+    this.checkBirdCrash();
+    this.recyclePipes();
   }
 
   placePipe(uPipe, lPipe) {
@@ -42,63 +49,62 @@ class Play extends Phaser.Scene {
     let gapTopRange = [this.pipeHeightMinimum, gapTopMax];
     let gapTop = Phaser.Math.Between(...gapTopRange);
     let xSpacing = Phaser.Math.Between(...this.xSpacingRange);
-    let xPrevious = getRightMostPipe();
+    let xPrevious = this.getRightMostPipe();
     let pipeX = xPrevious + xSpacing;
-    console.log(pipeX, xSpacing); //, gapTop, rightX);
+
     uPipe.x = pipeX;
     uPipe.y = gapTop;
     lPipe.x = pipeX;
     lPipe.y = gapTop + yGap;
   }
 
-  function recyclePipes() {
-  let tempPipes = [];
-  pipes.getChildren().forEach(pipe => {
-    if (pipe.getBounds().right < 0) {
-      tempPipes.push(pipe);
-      if (tempPipes.length === 2) {
-        placePipe(...tempPipes);
+  recyclePipes() {
+    let tempPipes = [];
+    this.pipes.getChildren().forEach(pipe => {
+      if (pipe.getBounds().right < 0) {
+        tempPipes.push(pipe);
+        if (tempPipes.length === 2) {
+          this.placePipe(...tempPipes);
+        }
       }
+    });
+  }
+
+  getRightMostPipe() {
+    let rightmostX = 0;
+    this.pipes.getChildren().forEach(pipe => {
+      rightmostX = Math.max(pipe.x, rightmostX);
+    });
+    return rightmostX;
+  }
+
+  checkBirdCrash() {
+    if (this.bird.body.position.x > this.config.width - this.bird.body.width) {
+      this.bird.body.velocity.x *= -1;
     }
-  });
-}
-
-restartBirdPosition() {
-  this.bird.body.x = initBirdX;
-  bird.body.y = initBirdY;
-  bird.body.velocity.x = 0;
-  bird.body.velocity.y = 0;
-}
-
-getRightMostPipe() {
-  let rightmostX = 0;
-  pipes.getChildren().forEach(pipe => {
-    rightmostX = Math.max(pipe.x, rightmostX);
-  });
-  return rightmostX;
-}
-
-checkBirdCrash() {
-  if (bird.body.position.x > config.width - bird.body.width) {
-    bird.body.velocity.x *= -1;
+    else if (this.bird.body.position.x < 0) {
+      this.bird.body.velocity.x *= -1;
+    }
+    // allow bird to go above top of screen
+    if (this.bird.body.position.y > this.config.height - this.bird.height) {
+      console.log("You crashed into the ground.");
+      this.restartBirdPosition();
+    }
+    else if (this.bird.body.position.y < -240) {
+      console.log("You flew too high near the sun.");
+      this.restartBirdPosition();
+    }
   }
-  else if (bird.body.position.x < 0) {
-    bird.body.velocity.x *= -1;
-  }
-  // allow bird to go above top of screen
-  if (bird.body.position.y > config.height - bird.height) {
-    console.log("You crashed into the ground.");
-    restartBirdPosition();
-  }
-  else if (bird.body.position.y < -240) {
-    console.log("You flew too high near the sun.");
-    restartBirdPosition();
-  }
-}
 
-flap() {
-  bird.body.velocity.y -= flapSpeed;
-  console.log("flapping");
-}
+  restartBirdPosition() {
+    this.bird.x = this.config.playerInitX;
+    this.bird.y = this.config.playerInitY;
+    this.bird.body.velocity.y = 0;
+  }
+
+  flap() {
+    this.bird.body.velocity.y -= this.flapSpeed;
+    console.log("flapping");
+  }
 }
 export default Play;
