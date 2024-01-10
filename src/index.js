@@ -1,18 +1,28 @@
 import Phaser from "phaser";
 import Play from "./scenes/play";
 
+const WIDTH = 1200;
+const HEIGHT = 600;
+const PLAYER_INIT_X = 50;
+const PLAYER_INIT_Y = HEIGHT / 5 * 2;
+
+const SHARED_CONFIG = {
+  width: WIDTH,
+  height: HEIGHT,
+  playerInitX: PLAYER_INIT_X,
+  playerInitY: PLAYER_INIT_Y
+};
+
 const config = {
   type: Phaser.AUTO,
-  width: 1200,
-  height: 600,
+  ...SHARED_CONFIG,
   physics: {
     default: "arcade",
     arcade: {
       debug: true,
-      // gravity: { y: 10 }
     }
   },
-  scene: [Play]
+  scene: [new Play(SHARED_CONFIG)]
 };
 // scene: {
 //   preload,
