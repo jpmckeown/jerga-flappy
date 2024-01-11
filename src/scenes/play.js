@@ -91,6 +91,7 @@ class Play extends Phaser.Scene {
         if (tempPipes.length === 2) {
           this.placePipe(...tempPipes);
           this.incrementScore();
+          this.saveBestScore();
         }
       }
     });
@@ -132,16 +133,17 @@ class Play extends Phaser.Scene {
     this.score += 1;
     this.scoreText.setText(`Score: ${this.score}`);
   }
-
-  gameOver() {
-    this.physics.pause();
-    this.bird.setTint(0xff0000);
-
+  saveBestScore() {
     let bestScoreStr = localStorage.getItem('bestScore');
     let bestScore = bestScoreStr && parseInt(bestScoreStr, 10);
     if (!bestScore || this.score > bestScore) {
       localStorage.setItem('bestScore', this.score);
     }
+  }
+  gameOver() {
+    this.physics.pause();
+    this.bird.setTint(0xff0000);
+    this.saveBestScore();
 
     this.time.addEvent({
       delay: 1000,
