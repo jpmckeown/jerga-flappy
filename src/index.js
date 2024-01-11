@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import Play from "./scenes/play";
 import Menu from "./scenes/menu";
+import PreLoad from "./scenes/preload";
 
 const WIDTH = 1200;
 const HEIGHT = 600;
@@ -14,6 +15,10 @@ const SHARED_CONFIG = {
   playerInitY: PLAYER_INIT_Y
 };
 
+const SCENES = [PreLoad, Menu, Play];
+const createScene = Scene => new Scene(SHARED_CONFIG);
+const initScenes = () => SCENES.map(createScene);
+
 const config = {
   type: Phaser.AUTO,
   ...SHARED_CONFIG,
@@ -23,7 +28,8 @@ const config = {
       debug: true,
     }
   },
-  scene: [new Menu(SHARED_CONFIG), new Play(SHARED_CONFIG)]
+  scene: initScenes()
+  // scene: [PreLoad, new Menu(SHARED_CONFIG), new Play(SHARED_CONFIG)]
 };
 
 new Phaser.Game(config);

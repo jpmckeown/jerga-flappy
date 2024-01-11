@@ -13,13 +13,13 @@ class Play extends Phaser.Scene {
     this.pipeHeightMinimum = 10;
   }
 
-  preload() {
-    this.load.image('sky', 'assets/sky.png');
-    this.load.image('bird', 'assets/bird.png');
-    this.load.image('pipe', 'assets/pipe.png');
-    this.load.image('ui_bg', 'assets/UI_blank.png');
-    this.load.image('pause', 'assets/pause_button.png');
-  }
+  // preload() {
+  //   this.load.image('sky', 'assets/sky.png');
+  //   this.load.image('bird', 'assets/bird.png');
+  //   this.load.image('pipe', 'assets/pipe.png');
+  //   this.load.image('ui_bg', 'assets/UI_blank.png');
+  //   this.load.image('pause', 'assets/pause_button.png');
+  // }
 
   create() {
     this.makeBackground();
