@@ -1,10 +1,10 @@
-import Phaser from 'phaser';
+import Base from './base';
 const PIPES_TO_RENDER = 3;
 
-class Play extends Phaser.Scene {
+class Play extends Base {
   constructor(config) {
-    super('Play');
-    this.config = config;
+    super('Play', config);
+    //this.config = config;
     this.bird = null;
     this.boostVelocity = 70;
     this.pipes = null;
@@ -13,16 +13,9 @@ class Play extends Phaser.Scene {
     this.pipeHeightMinimum = 10;
   }
 
-  // preload() {
-  //   this.load.image('sky', 'assets/sky.png');
-  //   this.load.image('bird', 'assets/bird.png');
-  //   this.load.image('pipe', 'assets/pipe.png');
-  //   this.load.image('ui_bg', 'assets/UI_blank.png');
-  //   this.load.image('pause', 'assets/pause_button.png');
-  // }
-
   create() {
-    this.makeBackground();
+    super.create();
+    //this.makeBackground();
     this.makePipes();
     this.makeBird();
     this.makeColliders();
