@@ -67,15 +67,23 @@ class Play extends Phaser.Scene {
   }
 
   makeUI() {
-    this.add.image(615, 6, 'ui_bg').setOrigin(0, 0).setScale(0.85);
+    let margin = 5;
+    this.add.image(this.bg.width - margin, margin, 'ui_bg')
+      .setOrigin(1, 0)
+      .setScale(0.85);
 
-    this.pauseButton = this.add.image(692, 555, 'pause')
-      .setOrigin(0, 0)
-      .setScale(0.5);
+    const pauseButton = this.add.image(this.bg.width - margin, this.bg.height - margin, 'pause')
+      .setOrigin(1, 1)
+      .setScale(0.5)
+      .setInteractive();
+    pauseButton.on('pointerdown', () => {
+      this.physics.pause();
+      this.scene.pause();
+    });
   }
 
   makeScore() {
-    let x = this.bg.width - 175;
+    let x = this.bg.width - 160;
     let y = 10;
     let yLineSpacing = 32;
 
