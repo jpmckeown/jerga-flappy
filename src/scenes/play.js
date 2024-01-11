@@ -17,6 +17,8 @@ class Play extends Phaser.Scene {
     this.load.image('sky', 'assets/sky.png');
     this.load.image('bird', 'assets/bird.png');
     this.load.image('pipe', 'assets/pipe.png');
+    this.load.image('ui_bg', 'assets/UI_blank.png');
+    this.load.image('pause', 'assets/pause_button.png');
   }
 
   create() {
@@ -24,6 +26,8 @@ class Play extends Phaser.Scene {
     this.makePipes();
     this.makeBird();
     this.makeColliders();
+
+    this.makeUI();
     this.makeScore();
     this.handleInputs();
   }
@@ -60,6 +64,27 @@ class Play extends Phaser.Scene {
 
   makeColliders() {
     this.physics.add.collider(this.bird, this.pipes, this.gameOver, null, this);
+  }
+
+  makeUI() {
+    this.add.image(615, 6, 'ui_bg').setOrigin(0, 0).setScale(0.85);
+
+    this.pauseButton = this.add.image(692, 555, 'pause')
+      .setOrigin(0, 0)
+      .setScale(0.5);
+  }
+
+  makeScore() {
+    let x = this.bg.width - 175;
+    let y = 10;
+    let yLineSpacing = 32;
+
+    this.score = 0;
+    this.scoreText = this.add.text(x, y, `Score: ${this.score}`, { fontSize: '24px', fill: '#fff' });
+    y += yLineSpacing;
+
+    let bestScore = localStorage.getItem('bestScore');
+    this.bestScoreText = this.add.text(x, y, `Best score: ${bestScore || 0}`, { fontSize: '16px', fill: '#999' });
   }
 
   handleInputs() {
@@ -114,19 +139,6 @@ class Play extends Phaser.Scene {
       console.log("You flew too high near the sun.");
       this.gameOver();
     }
-  }
-
-  makeScore() {
-    let x = this.bg.width - 180;
-    let y = 12;
-    let yLineSpacing = 36;
-
-    this.score = 0;
-    this.scoreText = this.add.text(x, y, `Score: ${this.score}`, { fontSize: '24px', fill: '#000' });
-    y += yLineSpacing;
-
-    let bestScore = localStorage.getItem('bestScore');
-    this.bestScoreText = this.add.text(x, y, `Best score: ${bestScore || 0}`, { fontSize: '16px', fill: '#555' });
   }
 
   incrementScore() {
