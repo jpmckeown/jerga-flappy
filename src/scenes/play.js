@@ -62,16 +62,6 @@ class Play extends Phaser.Scene {
     this.physics.add.collider(this.bird, this.pipes, this.gameOver, null, this);
   }
 
-  makeScore() {
-    this.score = 0;
-    this.scoreText = this.add.text(this.bg.width - 200, 12, `Score: ${this.score}`, { fontSize: '24px', fill: '#000' });
-  }
-
-  incrementScore() {
-    this.score += 1;
-    this.scoreText.setText(`Score: ${this.score}`);
-  }
-
   handleInputs() {
     this.input.on('pointerdown', this.boost, this);
     let spacebar = this.input.keyboard.addKey('SPACE');
@@ -125,13 +115,38 @@ class Play extends Phaser.Scene {
     }
   }
 
+  makeScore() {
+    let x = this.bg.width - 180;
+    let y = 12;
+    let yLineSpacing = 36;
+
+    this.score = 0;
+    this.scoreText = this.add.text(x, y, `Score: ${this.score}`, { fontSize: '24px', fill: '#000' });
+    y += yLineSpacing;
+
+    let bestScore = localStorage.getItem('bestScore');
+    this.bestScoreText = this.add.text(x, y, `Best score: ${bestScore || 0}`, { fontSize: '16px', fill: '#555' });
+  }
+
+  incrementScore() {
+    this.score += 1;
+    this.scoreText.setText(`Score: ${this.score}`);
+  }
+
   gameOver() {
     this.physics.pause();
     this.bird.setTint(0xff0000);
+
+    let bestScoreStr = localStorage.getItem('bestScore');
+    let bestScore = bestScoreStr && parseInt(bestScoreStr, 10);
+    if (!bestScore || this.score > bestScore) {
+      localStorage.setItem('bestScore', this.score);
+    }
+
     this.time.addEvent({
       delay: 1000,
       callback: () => {
-        //this.scene.restart();
+        this.scene.restart();
       },
       loop: false
     });
