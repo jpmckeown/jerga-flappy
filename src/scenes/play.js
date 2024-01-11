@@ -20,16 +20,21 @@ class Play extends Phaser.Scene {
   }
 
   create() {
-    this.add.image(0, 0, 'sky').setOrigin(0, 0); // background
+    this.makeBackground();
     this.makePipes();
     this.makeBird();
     this.makeColliders();
+    this.makeScore();
     this.handleInputs();
   }
 
   update() {
     this.checkBirdCrash();
     this.recyclePipes();
+  }
+
+  makeBackground() {
+    this.bg = this.add.image(0, 0, 'sky').setOrigin(0, 0);
   }
 
   makePipes() {
@@ -55,6 +60,16 @@ class Play extends Phaser.Scene {
 
   makeColliders() {
     this.physics.add.collider(this.bird, this.pipes, this.gameOver, null, this);
+  }
+
+  makeScore() {
+    this.score = 0;
+    this.scoreText = this.add.text(this.bg.width - 200, 12, `Score: ${this.score}`, { fontSize: '24px', fill: '#000' });
+  }
+
+  incrementScore() {
+    this.score += 1;
+    this.scoreText.setText(`Score: ${this.score}`);
   }
 
   handleInputs() {
@@ -85,6 +100,7 @@ class Play extends Phaser.Scene {
         tempPipes.push(pipe);
         if (tempPipes.length === 2) {
           this.placePipe(...tempPipes);
+          this.incrementScore();
         }
       }
     });
@@ -107,12 +123,6 @@ class Play extends Phaser.Scene {
       console.log("You flew too high near the sun.");
       this.gameOver();
     }
-    // if (this.bird.body.position.x > this.config.width - this.bird.body.width) {
-    //   this.bird.body.velocity.x *= -1;
-    // }
-    // else if (this.bird.body.position.x < 0) {
-    //   this.bird.body.velocity.x *= -1;
-    // }
   }
 
   gameOver() {
@@ -121,13 +131,10 @@ class Play extends Phaser.Scene {
     this.time.addEvent({
       delay: 1000,
       callback: () => {
-        this.scene.restart();
+        //this.scene.restart();
       },
       loop: false
     });
-    // this.bird.x = this.config.playerInitX;
-    // this.bird.y = this.config.playerInitY;
-    // this.bird.body.velocity.y = 0;
   }
 
   boost() {
