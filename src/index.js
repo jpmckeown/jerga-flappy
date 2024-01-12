@@ -3,7 +3,7 @@ import Play from "./scenes/play";
 import Menu from "./scenes/menu";
 import PreLoad from "./scenes/preload";
 
-const WIDTH = 1200;
+const WIDTH = 800;
 const HEIGHT = 600;
 const PLAYER_INIT_X = 50;
 const PLAYER_INIT_Y = HEIGHT / 3;
