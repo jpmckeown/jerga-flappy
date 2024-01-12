@@ -28,6 +28,14 @@ class Menu extends Base {
     textGO.on('pointerout', () => {
       textGO.setStyle({ fill: '#000' });
     });
+    textGO.on('pointerup', () => {
+      if (menuItem.scene) {
+        this.scene.start(menuItem.scene);
+      }
+      else if (menuItem.text === 'Exit') {
+        this.game.destroy(true);
+      }
+    });
   }
 }
 

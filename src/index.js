@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import Play from "./scenes/play";
 import Menu from "./scenes/menu";
+import Score from "./scenes/score";
 import PreLoad from "./scenes/preload";
 
 const WIDTH = 800;
