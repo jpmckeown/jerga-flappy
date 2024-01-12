@@ -10,7 +10,9 @@ class PreLoad extends Phaser.Scene {
     this.load.image('pipe', 'assets/pipe.png');
     this.load.image('ui_bg', 'assets/UI_blank.png');
     this.load.image('pause', 'assets/pause_button.png');
+    this.load.image('back', 'assets/back.png');
   }
+
   create() {
     this.scene.start('Menu');
   }

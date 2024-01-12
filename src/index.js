@@ -16,7 +16,7 @@ const SHARED_CONFIG = {
   playerInitY: PLAYER_INIT_Y
 };
 
-const SCENES = [PreLoad, Menu, Play];
+const SCENES = [PreLoad, Menu, Play, Score];
 const createScene = Scene => new Scene(SHARED_CONFIG);
 const initScenes = () => SCENES.map(createScene);
 
