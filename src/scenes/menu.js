@@ -13,8 +13,22 @@ class Menu extends Base {
 
   create() {
     super.create();
-    this.makeMenu(this.menu);
+    this.makeMenu(this.menu, this.setupMenuEvents.bind(this));
+    // this.makeMenu(this.menu, this.setupMenuEvents); // context this undefined
     // this.scene.start('Play');
   }
+
+  setupMenuEvents(menuItem) {
+    const textGO = menuItem.textGO;
+    textGO.setInteractive();
+    console.log(this);
+    textGO.on('pointerover', () => {
+      textGO.setStyle({ fill: '#999' });
+    });
+    textGO.on('pointerout', () => {
+      textGO.setStyle({ fill: '#000' });
+    });
+  }
 }
+
 export default Menu;
