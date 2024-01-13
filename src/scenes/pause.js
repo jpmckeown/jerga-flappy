@@ -6,7 +6,6 @@ class Pause extends Base {
 
     this.menu = [
       { scene: 'Play', text: 'Continue' },
-      { scene: 'Score', text: 'Score' },
       { scene: 'Menu', text: 'Menu' },
     ];
   }

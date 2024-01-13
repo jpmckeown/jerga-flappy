@@ -11,17 +11,18 @@ class Play extends Base {
     this.xSpacingRange = [400, 600];
     this.yGapRange = [150, 250];
     this.pipeHeightMinimum = 10;
+    this.isPaused = false;
   }
 
   create() {
     super.create();
-    //this.makeBackground(); // gone to Base
+    // this.makeBackground(); // gone to Base
     this.makePipes();
     this.makeBird();
     this.makeColliders();
-
     this.makeUI();
     this.makeScore();
+    this.makePause();
     this.handleInputs();
     this.listenEvents();
   }
@@ -32,15 +33,27 @@ class Play extends Base {
   }
 
   listenEvents() {
-    this.events.on('resume', () => {
+    if (this.pauseEvent) { return; }
+    this.pauseEvent = this.events.on('resume', () => {
       this.countdownText = this.add.text(...this.bgCentre, 'Go in: ' + this.readyTime, this.fontOptions).setOrigin(0.5);
       this.timedEvent = this.time.addEvent({
         delay: 1000,
-        callback: () => console.log(this.readyTime -= 1),
+        callback: () => this.countdown,
         callbackScope: this,
         loop: true
       });
     });
+  }
+
+  countdown() {
+    this.readyTime -= 1;
+    this.countdownText.setText('Go in: ' + this.readyTime);
+    if (readyTime <= 0) {
+      this.isPaused = false;
+      this.countdownText.setText = '';
+      this.physics.resume();
+      this.timedEvent.remove(); // stops loop
+    }
   }
 
   makeBackground() {
@@ -77,13 +90,17 @@ class Play extends Base {
     this.add.image(this.bg.width - margin, margin, 'ui_bg')
       .setOrigin(1, 0)
       .setScale(0.85);
+  }
 
-    const pauseButton = this.add.image(this.bg.width - margin, this.bg.height - margin, 'pause')
+  makePause() {
+    this.isPaused = false;
+    const pauseButton = this.add.image(this.bg.width - this.margin, this.bg.height - this.margin, 'pause')
       .setOrigin(1, 1)
       .setScale(0.5)
       .setInteractive();
 
     pauseButton.on('pointerdown', () => {
+      this.isPause = true;
       this.physics.pause();
       this.scene.pause();
       this.scene.launch('Pause');
@@ -185,7 +202,6 @@ class Play extends Base {
 
   boost() {
     this.bird.body.velocity.y -= this.boostVelocity;
-    console.log("flapping");
   }
 }
 
