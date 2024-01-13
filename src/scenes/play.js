@@ -31,6 +31,18 @@ class Play extends Base {
     this.recyclePipes();
   }
 
+  listenEvents() {
+    this.events.on('resume', () => {
+      this.countdownText = this.add.text(...this.bgCentre, 'Go in: ' + this.readyTime, this.fontOptions).setOrigin(0.5);
+      this.timedEvent = this.time.addEvent({
+        delay: 1000,
+        callback: () => console.log(this.readyTime -= 1),
+        callbackScope: this,
+        loop: true
+      });
+    });
+  }
+
   makeBackground() {
     this.bg = this.add.image(0, 0, 'sky').setOrigin(0, 0);
   }
@@ -155,12 +167,6 @@ class Play extends Base {
     if (!bestScore || this.score > bestScore) {
       localStorage.setItem('bestScore', this.score);
     }
-  }
-
-  listenEvents() {
-    this.events.on('resume', () => {
-      this.countdownText = this.add.text(...this.bgCentre, 'Resume in ' + this.initialTime, this.fontOptions);
-    });
   }
 
   gameOver() {

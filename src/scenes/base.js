@@ -8,6 +8,7 @@ class Base extends Phaser.Scene {
     this.lineHeight = 70;
     this.fontOptions = { fontSize: `${this.fontSize}px`, fill: '#000' };
     this.bgCentre = [config.width / 2, config.height / 2];
+    this.readyTime = 3;
   }
 
   create() {
