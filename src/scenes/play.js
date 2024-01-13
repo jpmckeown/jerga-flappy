@@ -15,7 +15,7 @@ class Play extends Base {
 
   create() {
     super.create();
-    //this.makeBackground();
+    //this.makeBackground(); // gone to Base
     this.makePipes();
     this.makeBird();
     this.makeColliders();
@@ -23,6 +23,7 @@ class Play extends Base {
     this.makeUI();
     this.makeScore();
     this.handleInputs();
+    this.listenEvents();
   }
 
   update() {
@@ -69,9 +70,11 @@ class Play extends Base {
       .setOrigin(1, 1)
       .setScale(0.5)
       .setInteractive();
+
     pauseButton.on('pointerdown', () => {
       this.physics.pause();
       this.scene.pause();
+      this.scene.launch('Pause');
     });
   }
 
@@ -153,6 +156,13 @@ class Play extends Base {
       localStorage.setItem('bestScore', this.score);
     }
   }
+
+  listenEvents() {
+    this.events.on('resume', () => {
+      this.countdownText = this.add.text(...this.bgCentre, 'Resume in ' + this.initialTime, this.fontOptions);
+    });
+  }
+
   gameOver() {
     this.physics.pause();
     this.bird.setTint(0xff0000);

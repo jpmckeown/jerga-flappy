@@ -21,7 +21,6 @@ class Menu extends Base {
   setupMenuEvents(menuItem) {
     const textGO = menuItem.textGO;
     textGO.setInteractive();
-    console.log(this);
     textGO.on('pointerover', () => {
       textGO.setStyle({ fill: '#999' });
     });

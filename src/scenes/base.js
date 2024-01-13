@@ -15,9 +15,10 @@ class Base extends Phaser.Scene {
 
     if (this.config.canGoBack) {
       let backButton = this.add.image(this.config.width - 10, this.config.height - 10, 'back')
-        .setInteractive(true)
+        .setOrigin(1)
+        .setInteractive()
         .setScale(3);
-      backButton.on('pointerdown', () => {
+      backButton.on('pointerup', () => {
         this.scene.start('Menu');
       });
     }

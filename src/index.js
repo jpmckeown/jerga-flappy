@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import Play from "./scenes/play";
 import Menu from "./scenes/menu";
+import Pause from "./scenes/pause";
 import Score from "./scenes/score";
 import PreLoad from "./scenes/preload";
 
@@ -16,7 +17,7 @@ const SHARED_CONFIG = {
   playerInitY: PLAYER_INIT_Y
 };
 
-const SCENES = [PreLoad, Menu, Play, Score];
+const SCENES = [PreLoad, Menu, Score, Play, Pause];
 const createScene = Scene => new Scene(SHARED_CONFIG);
 const initScenes = () => SCENES.map(createScene);
 
