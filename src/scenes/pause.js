@@ -27,11 +27,12 @@ class Pause extends Base {
     textGO.on('pointerup', () => {
       if (menuItem.scene && menuItem.text === 'Continue') {
         this.scene.stop();
+        debugger;
         this.scene.resume(menuItem.scene);
       }
       else {
         this.scene.stop('Play');
-        // .start includes shutdown current scene i.e. Pause
+        // .start includes shutdown of current scene i.e. Pause
         this.scene.start(menuItem.scene); // i.e. Menu
       }
     });

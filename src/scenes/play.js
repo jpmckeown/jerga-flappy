@@ -24,7 +24,7 @@ class Play extends Base {
     this.makeScore();
     this.makePause();
     this.handleInputs();
-    this.listenEvents();
+    // this.listenEvents();
   }
 
   update() {
